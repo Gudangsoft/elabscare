@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BannerController;
 use App\Http\Controllers\HealthRecordDashboardController;
 use App\Http\Controllers\ObatController;
+use App\Http\Controllers\ProfileSettingController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\SummaryController;
 
@@ -24,6 +25,7 @@ Route::prefix('admin')->name('admin.')->middleware(HandleAdminOnly::class)->grou
         Route::resource('health-records', HealthRecordDashboardController::class);
         Route::resource('obat', ObatController::class);
         Route::resource('terapi-obat', TerapiObatController::class);
+        Route::get('profile', [ProfileSettingController::class, 'editAdmin'])->name('profile.edit');
         Route::get('settings/app-logo', [SettingController::class, 'indexAppLogo'])->name('app-logo.index');
         Route::get('settings/privacy-policy', [SettingController::class, 'indexPrivacyPolicy'])->name('privacy-policy.index');
         Route::patch('settings/app-logo', [SettingController::class, 'updateAppLogo'])->name('app-logo.update');

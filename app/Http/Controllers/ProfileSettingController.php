@@ -33,6 +33,13 @@ class ProfileSettingController extends Controller
         return Inertia::render('profile/settings/edit-profile');
     }
 
+    public function editAdmin()
+    {
+        return Inertia::render('dashboard/profile', [
+            'user' => Auth::user(),
+        ]);
+    }
+
     public function updateProfile(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();

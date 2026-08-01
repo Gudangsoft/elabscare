@@ -222,6 +222,14 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children, user }) => {
                                         </div>
                                         <ul className="to-top-list">
                                             <li>
+                                                <Link
+                                                    href="/admin/profile"
+                                                    className="dropdown-item hover-bg-transparent hover-text-primary d-flex align-items-center gap-3 px-0 py-8 text-black"
+                                                >
+                                                    <Icon icon="lucide:user" className="icon text-xl" /> My Profile
+                                                </Link>
+                                            </li>
+                                            <li>
                                                 <div
                                                     onClick={logout}
                                                     className="dropdown-item hover-bg-transparent hover-text-danger d-flex align-items-center gap-3 px-0 py-8 text-black"
