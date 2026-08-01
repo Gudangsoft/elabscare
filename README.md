@@ -34,7 +34,7 @@ Dibangun dengan **Laravel 12** (backend) + **Inertia.js v2** + **React (TypeScri
 
 | Bagian    | Teknologi                                             |
 | --------- | ------------------------------------------------------ |
-| Backend   | PHP 8.2+, Laravel 12, SQLite (default)                 |
+| Backend   | PHP 8.2+, Laravel 12, MySQL                             |
 | Frontend  | React 19 + TypeScript, Inertia.js v2, Vite              |
 | Styling   | Tailwind CSS (PWA), Bootstrap 5 / WowDash theme (Admin) |
 | Grafik    | ECharts (`echarts-for-react`)                           |
@@ -43,7 +43,8 @@ Dibangun dengan **Laravel 12** (backend) + **Inertia.js v2** + **React (TypeScri
 
 ### Prasyarat
 
-- PHP >= 8.2 dengan ekstensi standar Laravel
+- PHP >= 8.2 dengan ekstensi standar Laravel (termasuk `pdo_mysql`)
+- MySQL / MariaDB (mis. lewat Laragon, XAMPP, atau server terpisah)
 - Composer
 - Node.js (LTS) & npm
 
@@ -61,15 +62,28 @@ npm install
 # 3. Siapkan file environment
 cp .env.example .env
 php artisan key:generate
+```
 
-# 4. Siapkan database (default: SQLite)
-touch database/database.sqlite
+Buka `.env`, ubah bagian database ke MySQL dan sesuaikan dengan kredensial lokal Anda (buat database kosong terlebih dulu, mis. `elabs`):
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=elabs
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Lalu jalankan migrasi & seeder:
+
+```bash
 php artisan migrate --seed
 
-# 5. Buat symlink storage (untuk avatar, banner, dokumen lab)
+# Buat symlink storage (untuk avatar, banner, dokumen lab)
 php artisan storage:link
 
-# 6. Build asset frontend
+# Build asset frontend
 npm run build
 ```
 
