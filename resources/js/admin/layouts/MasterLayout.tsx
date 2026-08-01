@@ -194,7 +194,7 @@ const MasterLayout: React.FC<MasterLayoutProps> = ({ children, user }) => {
                                         type="button"
                                         data-bs-toggle="dropdown"
                                     >
-                                        {user.avatar != null || user.avatar != undefined || user.avatar != '' ? (
+                                        {user.avatar ? (
                                             <img
                                                 src={`/storage/` + user.avatar}
                                                 alt="avatar"
