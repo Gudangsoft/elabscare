@@ -38,6 +38,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
 
+    Route::get('/panduan', function () {
+        return Inertia::render('help/user-guide', [
+            'user' => auth()->user(),
+        ]);
+    })->name('help.index');
+
     // Route::get('/profile', function () {return Inertia::render('profile/profile');})->name('profile');
     
     Route::get('/profile', [ProfileSettingController::class, 'index'])->name('profile');

@@ -1,11 +1,24 @@
 import { UserType } from '@/pwa/types/userType';
 import { router, usePage } from '@inertiajs/react';
-import { Bell, ChevronRight, LayoutDashboard, LogOut, User } from 'lucide-react';
+import { Bell, ChevronRight, HelpCircle, LayoutDashboard, LogOut, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'; // 1. Import hooks
 
 const AppLogo = ({ className, onClick }: { className?: string; onClick?: () => void }) => {
     const { app_logo } = usePage().props;
     return <img src={`/storage/${app_logo}`} alt="App Logo" className={`${className}`} onClick={onClick} />;
+};
+
+const HelpButton = () => {
+    return (
+        <button
+            type="button"
+            onClick={() => router.get(route('help.index'))}
+            className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-gray-600 hover:bg-gray-100"
+            aria-label="Panduan Pengguna"
+        >
+            <HelpCircle className="h-5 w-5" />
+        </button>
+    );
 };
 
 const NotificationBell = () => {
@@ -118,6 +131,7 @@ const AppBarHome = ({ user }: { user: UserType }) => {
                     )}
                 </div>
                 <div className="flex items-center space-x-1">
+                    <HelpButton />
                     <NotificationBell />
                     <AppLogo onClick={() => router.get(route('home'))} className="h-7 w-auto" />
                 </div>
@@ -129,6 +143,7 @@ const AppBarHome = ({ user }: { user: UserType }) => {
             <AppLogo onClick={() => router.get(route('home'))} className="h-9 w-auto" />
 
             <div className="flex items-center space-x-1">
+                <HelpButton />
                 <NotificationBell />
                 <div onClick={() => router.get(route('profile'))} className="flex items-center space-x-2 bg-white">
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-teal-400 to-teal-600">
