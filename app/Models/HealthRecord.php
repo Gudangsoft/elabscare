@@ -21,10 +21,12 @@ class HealthRecord extends Model
         'hdl',
         'ldl',
         'uric_acid',
+        'systolic',
+        'diastolic',
         'recorded_at',
         'type_document',
         'lab_document',
-        
+
     ];
     protected $casts = [
         'recorded_at' => 'date',
@@ -36,6 +38,8 @@ class HealthRecord extends Model
         'hdl' => 'decimal:2',
         'ldl' => 'decimal:2',
         'uric_acid' => 'decimal:2',
+        'systolic' => 'integer',
+        'diastolic' => 'integer',
     ];
 
     public function user()

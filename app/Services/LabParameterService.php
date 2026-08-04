@@ -94,7 +94,63 @@ class LabParameterService
             }
         }
 
+        $bloodPressureTest = $this->getBloodPressureTest($healthRecord);
+        if ($bloodPressureTest) {
+            $analysis['Tekanan Darah'] = [$bloodPressureTest];
+        }
+
         return $analysis;
+    }
+
+    private function getBloodPressureTest(HealthRecord $healthRecord): ?array
+    {
+        $systolic = $healthRecord->systolic;
+        $diastolic = $healthRecord->diastolic;
+
+        if (!$systolic && !$diastolic) {
+            return null;
+        }
+
+        $value = $systolic && $diastolic
+            ? "{$systolic}/{$diastolic}"
+            : (string) ($systolic ?: $diastolic);
+
+        return [
+            'parameter' => (object) [
+                'parameter_name' => 'Tekanan Darah (Tensi)',
+                'unit' => 'mmHg',
+                'normal_range_text' => '90-139 / 60-89',
+            ],
+            'value' => $value,
+            'status' => $this->getBloodPressureStatus($systolic, $diastolic),
+            'has_value' => true,
+        ];
+    }
+
+    /**
+     * Classify blood pressure as Tinggi (High), Rendah (Low), or Normal.
+     *
+     * Either value crossing its high threshold marks it Tinggi; otherwise either
+     * value crossing its low threshold marks it Rendah.
+     */
+    public function getBloodPressureStatus($systolic, $diastolic): array
+    {
+        if (!$systolic && !$diastolic) {
+            return ['status' => '-', 'color' => 'text-gray-700', 'bgColor' => 'bg-gray-100'];
+        }
+
+        $isHigh = ($systolic && $systolic >= 140) || ($diastolic && $diastolic >= 90);
+        $isLow = ($systolic && $systolic < 90) || ($diastolic && $diastolic < 60);
+
+        if ($isHigh) {
+            return ['status' => 'Tinggi', 'color' => 'text-red-700', 'bgColor' => 'bg-red-100'];
+        }
+
+        if ($isLow) {
+            return ['status' => 'Rendah', 'color' => 'text-blue-700', 'bgColor' => 'bg-blue-100'];
+        }
+
+        return ['status' => 'Normal', 'color' => 'text-green-700', 'bgColor' => 'bg-green-100'];
     }
 
     private function getFieldNameFromParameter($parameterCode): ?string

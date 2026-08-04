@@ -20,6 +20,8 @@ interface HealthRecord {
     hdl: number | null;
     ldl: number | null;
     uric_acid: number | null;
+    systolic: number | null;
+    diastolic: number | null;
     recorded_at: string;
     lab_document: string | null;
     type_document: string | null;
@@ -41,8 +43,21 @@ type EditExaminationForm = {
     hdl: number;
     ldl: number;
     uric_acid: number;
+    systolic: number;
+    diastolic: number;
     recorded_at: string;
     lab_document: File | null;
+};
+
+const getBloodPressureStatus = (systolic: number, diastolic: number): { label: string; className: string } | null => {
+    if (!systolic && !diastolic) return null;
+
+    const isHigh = (systolic && systolic >= 140) || (diastolic && diastolic >= 90);
+    const isLow = (systolic && systolic < 90) || (diastolic && diastolic < 60);
+
+    if (isHigh) return { label: 'Tinggi', className: 'bg-red-100 text-red-700' };
+    if (isLow) return { label: 'Rendah', className: 'bg-blue-100 text-blue-700' };
+    return { label: 'Normal', className: 'bg-green-100 text-green-700' };
 };
 
 const formatDateForInput = (dateString: string) => {
@@ -65,9 +80,13 @@ export default function EditExamination({ user, healthRecord }: EditExaminationP
         hdl: healthRecord.hdl || 0,
         ldl: healthRecord.ldl || 0,
         uric_acid: healthRecord.uric_acid || 0,
+        systolic: healthRecord.systolic || 0,
+        diastolic: healthRecord.diastolic || 0,
         recorded_at: formatDateForInput(healthRecord.recorded_at),
         lab_document: null,
     });
+
+    const bloodPressureStatus = getBloodPressureStatus(data.systolic, data.diastolic);
 
     // Set current document info on mount
     useEffect(() => {
@@ -220,6 +239,49 @@ export default function EditExamination({ user, healthRecord }: EditExaminationP
                                 disabled={processing}
                             />
                             <InputError message={errors.recorded_at} />
+                        </div>
+
+                        {/* Blood Pressure */}
+                        <div className="space-y-4">
+                            <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Tekanan Darah (Tensi)</h2>
+
+                            <div className="grid gap-4 md:grid-cols-2">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="systolic">Sistolik (mmHg)</Label>
+                                    <Input
+                                        id="systolic"
+                                        type="number"
+                                        step="1"
+                                        min="0"
+                                        value={data.systolic || ''}
+                                        onChange={(e) => setData('systolic', Number(e.target.value))}
+                                        disabled={processing}
+                                        placeholder="90-139"
+                                    />
+                                    <InputError message={errors.systolic} />
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="diastolic">Diastolik (mmHg)</Label>
+                                    <Input
+                                        id="diastolic"
+                                        type="number"
+                                        step="1"
+                                        min="0"
+                                        value={data.diastolic || ''}
+                                        onChange={(e) => setData('diastolic', Number(e.target.value))}
+                                        disabled={processing}
+                                        placeholder="60-89"
+                                    />
+                                    <InputError message={errors.diastolic} />
+                                </div>
+                            </div>
+
+                            {bloodPressureStatus && (
+                                <div className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-medium ${bloodPressureStatus.className}`}>
+                                    Tensi {data.systolic || '-'}/{data.diastolic || '-'} mmHg &mdash; {bloodPressureStatus.label}
+                                </div>
+                            )}
                         </div>
 
                         {/* Sugar Tests */}

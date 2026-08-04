@@ -6,7 +6,7 @@ import PwaMainLayout from '@/pwa/layouts/pwa-main-layout';
 import { UserType } from '@/pwa/types/userType';
 import { router } from '@inertiajs/react';
 import AutoPlay from 'embla-carousel-autoplay';
-import { Activity, CheckCircle, Droplets, Heart, Minus, Pill, TrendingDown, TrendingUp } from 'lucide-react';
+import { Activity, CheckCircle, Droplets, Gauge, Heart, Minus, Pill, TrendingDown, TrendingUp } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 interface HealthRecord {
@@ -19,6 +19,8 @@ interface HealthRecord {
     hdl: number | null;
     ldl: number | null;
     uric_acid: number | null;
+    systolic: number | null;
+    diastolic: number | null;
     recorded_at: string;
 }
 
@@ -131,8 +133,29 @@ export default function Home({ user, selectedDate, healthRecord, healthSummary, 
         return <Minus className="h-4 w-4" />;
     };
 
+    const getBloodPressureStatus = (systolic: number | null, diastolic: number | null) => {
+        if (!systolic && !diastolic) return { status: 'Tidak Ada Data', color: 'text-gray-400', trend: null };
+
+        const isHigh = (systolic && systolic >= 140) || (diastolic && diastolic >= 90);
+        const isLow = (systolic && systolic < 90) || (diastolic && diastolic < 60);
+
+        if (isHigh) return { status: 'Tinggi', color: 'text-red-600', trend: 'up' };
+        if (isLow) return { status: 'Rendah', color: 'text-blue-600', trend: 'down' };
+        return { status: 'Normal', color: 'text-green-600', trend: null };
+    };
+
     // Health cards berdasarkan data real
     const healthCards = [
+        {
+            title: 'Tekanan Darah',
+            value: healthRecord?.systolic && healthRecord?.diastolic ? `${healthRecord.systolic}/${healthRecord.diastolic}` : '-',
+            unit: 'mmHg',
+            bgColor: 'bg-gradient-to-br from-rose-400 to-rose-500',
+            icon: <Gauge className="h-6 w-6 text-white" />,
+            chart: <div className="h-6" />,
+            status: getBloodPressureStatus(healthRecord?.systolic || null, healthRecord?.diastolic || null),
+            normalRange: '90-139 / 60-89 mmHg',
+        },
         {
             title: 'Gula Darah Puasa',
             value: healthRecord?.sugar_fasting?.toString() || '-',
